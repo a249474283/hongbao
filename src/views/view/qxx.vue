@@ -29,121 +29,9 @@
               {{item.user_nickname}}
           </dd>
         </dl>
-         <!-- <dl>
-          <dt>
-            <img src="../../assets/touxiang.png">
-          </dt>
-          <dd>
-              小仙
-          </dd>
-        </dl>
-         <dl>
-          <dt>
-            <img src="../../assets/touxiang.png">
-          </dt>
-          <dd>
-              小仙
-          </dd>
-        </dl>
-         <dl>
-          <dt>
-            <img src="../../assets/touxiang.png">
-          </dt>
-          <dd>
-              小仙
-          </dd>
-        </dl>
-         <dl>
-          <dt>
-            <img src="../../assets/touxiang.png">
-          </dt>
-          <dd>
-              小仙
-          </dd>
-        </dl>
-         <dl>
-          <dt>
-            <img src="../../assets/touxiang.png">
-          </dt>
-          <dd>
-              小仙
-          </dd>
-        </dl>
-         <dl>
-          <dt>
-            <img src="../../assets/touxiang.png">
-          </dt>
-          <dd>
-              小仙
-          </dd>
-        </dl>
-         <dl>
-          <dt>
-            <img src="../../assets/touxiang.png">
-          </dt>
-          <dd>
-              小仙
-          </dd>
-        </dl>
-         <dl>
-          <dt>
-            <img src="../../assets/touxiang.png">
-          </dt>
-          <dd>
-              小仙
-          </dd>
-        </dl>
-         <dl>
-          <dt>
-            <img src="../../assets/touxiang.png">
-          </dt>
-          <dd>
-              小仙
-          </dd>
-        </dl>
-        <dl>
-          <dt>
-            <img src="../../assets/touxiang.png">
-          </dt>
-          <dd>
-              小仙
-          </dd>
-        </dl>
-         <dl>
-          <dt>
-            <img src="../../assets/touxiang.png">
-          </dt>
-          <dd>
-              小仙
-          </dd>
-        </dl>
-         <dl>
-          <dt>
-            <img src="../../assets/touxiang.png">
-          </dt>
-          <dd>
-              小仙
-          </dd>
-        </dl>
-        <dl>
-          <dt>
-            <img src="../../assets/touxiang.png">
-          </dt>
-          <dd>
-              小仙
-          </dd>
-        </dl>
-      <dl>
-          <dt>
-            <img src="../../assets/touxiang.png">
-          </dt>
-          <dd>
-              小仙
-          </dd>
-        </dl> -->
-        <div class="qb">
+        <div class="qb" @click="allquncy">
           <p>查看全部群成员</p>
-          <span>（3129）</span>
+          <span>（{{cynum}}）</span>
         </div>
       </div>
     </div>
@@ -163,7 +51,8 @@ export default {
       title:'',
       qun_id:"",
       quncylist:[],
-      url:Url
+      url:Url,
+      cynum:""
     }
   },
   methods:{
@@ -225,6 +114,25 @@ export default {
       }).then(function(res){
         console.log(res)
         if((res.data.code == 1)){
+          _this.quncylist = res.data.data;
+          _this.cynum = res.data.count;
+        }
+      })
+    },
+    //获取所以群成员信息
+    allquncy:function(){
+       var _this = this;
+       axios({
+        method:'post',
+        url:Url+"/apis/user/getUsrList",
+        params:{
+          id:_this.qun_id,
+          all:1
+        }
+      }).then(function(res){
+        console.log(res)
+        if((res.data.code == 1)){
+          _this.quncylist = [];
           _this.quncylist = res.data.data;
         }
       })

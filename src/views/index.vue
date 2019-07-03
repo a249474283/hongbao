@@ -175,6 +175,7 @@ export default {
         text-align: center; 
         line-height: 0.87rem;
         font-size: 0.3rem;
+        background: #fff;
     }
     .ts{
         width: 100%;

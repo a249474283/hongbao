@@ -1,10 +1,6 @@
 <template>
   <div class="app">
-    <div class="header">
-        <span>
-          游戏
-        </span>
-    </div>
+        <h1 class="bt">游戏</h1>
     <!-- 以上是头部标题 -->
     <van-swipe :autoplay="3000" indicator-color="white" class="banner">
       <van-swipe-item v-for="(item,index) of bannerList" :key="index">  
@@ -97,23 +93,14 @@ export default {
 }
 </script>
 <style scoped>
-  .header{
-    width:100%;
-    height: 0.87rem;
-    background-color: #fff;
-    position: relative;
-    z-index: 4;
-  }
-  .header span{
-    display: block;
+  .bt{
     width: 100%;
     height: 0.87rem;
-    font-size: 0.3rem;
+    text-align: center; 
     line-height: 0.87rem;
-    text-align: center;
-    float: left;
-    color: #040404;
-  }
+    font-size: 0.3rem;
+    background: #fff;
+    }
   .banner,.youx{
     width: 100%;
     height: 3.4rem;

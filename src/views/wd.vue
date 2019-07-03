@@ -1,10 +1,6 @@
 <template>
   <div class="app">
-    <div class="header">
-        <span>
-          我的
-        </span>
-    </div>
+    <h1 class="bt">我的</h1>
     <div class="th" @click="information">
       <img :src="img" alt="">
       <div class="xinx">
@@ -128,32 +124,14 @@ export default {
   width: 100%;
   overflow: hidden;
 }
-  .header{
-    width:100%;
+.bt{
+    width: 100%;
     height: 0.87rem;
-    background-color: #ffffff;
-    position: relative;
-    z-index: 4;
-    margin-bottom: 0.39rem;
-
-  }
-  .header img{
-    display: block;
-    width: 0.2rem;
-    height: 0.34rem;
-    margin: 0.25rem 0 0 0.5rem;
-    float: left; 
-  }
-  .header span{
-    display: block;
-    width: 3rem;
-    height: 0.3rem;
+    text-align: center; 
+    line-height: 0.87rem;
     font-size: 0.3rem;
-    margin-top: 0.25rem;
-    margin-left: 3.5rem;
-    float: left;
-    color: #040404;
-  }
+    background: #fff;
+    }
   .th{
     width: 100%;
     height: 1.43rem;

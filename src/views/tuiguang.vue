@@ -1,6 +1,6 @@
 <template>
   <div class="app">
-    <h1 class="bt">推广</h1>
+    <h1 class="bta">推广</h1>
     <div class="tg">
       <div class="tgl" @click="ewm">
         <img src="../assets/tgewm.png">
@@ -71,12 +71,14 @@ export default {
 }
 </script>
 <style scoped>
-  .bt{
+  .bta{
       width: 100%;
       height: 0.87rem;
       text-align: center; 
       line-height: 0.87rem;
       font-size: 0.3rem;
+      background: #fff;
+      margin-bottom: 0.4rem;
     }
   .tg{
     width: 100%;
