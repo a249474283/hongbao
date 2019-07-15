@@ -69,22 +69,23 @@ export default {
     top: 0;
   }
   .header img{
-    display: block;
-    width: 0.2rem;
-    height: 0.34rem;
-    margin: 0.25rem 0 0 0.5rem;
-    float: left; 
-  }
-  .header span{
-    display: block;
-    width: 3rem;
-    height: 0.3rem;
-    font-size: 0.3rem;
-    margin-top: 0.25rem;
-    margin-left: 2.3rem;
-    float: left;
-    color: #040404;
-  }
+      display: block;
+      width: 0.2rem;
+      height: 0.34rem;
+      margin: 0.25rem 0 0 0.5rem;
+      float: left; 
+      z-index: 10;
+      position: absolute;
+    }
+    .header span{
+      display: block;
+      width: 100%;
+      font-size: 0.3rem;
+      line-height: 0.87rem;
+      text-align: center;
+      color: #040404;
+      position: absolute;
+    }
   .h2{
     width: 100%;
     height: 1.1rem;
@@ -106,8 +107,7 @@ export default {
   }
   .neirong img{
     display: block;
-    width: 6.56rem;
-    height: 2.99rem;
+    width: 100%;
     margin: 0 auto;
     position: relative;
     top: 0.18rem;

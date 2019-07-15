@@ -3,10 +3,12 @@
   <div class="header">
       <img src="../../assets/fanhui.png" @click="fanhui">
         <span>
-          我的收款号
+          我的收款账号
         </span>
-    </div>
-  <div :id="item.id" :class="a+item.bank_id" v-for="(item,key) of list" :key="key" >
+  </div>
+
+  <div class="box">
+  <div :id="item.id" :class="a+item.bank_id%2" v-for="(item,key) of list" :key="key" >
     <div class="yh">
       <img :src="url+item.bank_logo" alt="">
       <span>{{item.bank_name}}</span>
@@ -17,6 +19,7 @@
       <li>****</li>
       <li>{{item.card_number}}</li>
     </ul>
+  </div>
   </div>
   <div class="floot" @click="tj">+添加银行卡</div> 
 </div>
@@ -58,10 +61,6 @@ export default {
             _this.list[i].card_number = _this.list[i].card_number.substr(-4);
           }
           console.log(_this.list)
-        }else{
-          _this.$dialog.alert({
-            message: res.data.msg
-          });
         }
       })
     },
@@ -75,32 +74,38 @@ export default {
 }
 </script>
 <style scoped>
+.app{
+  padding-bottom: 1rem;
+}
   .header{
     width:100%;
     height: 0.87rem;
     background-color: #fff;
-    position: relative;
+    position: fixed;
     z-index: 4;
   }
   .header img{
-    display: block;
-    width: 0.2rem;
-    height: 0.34rem;
-    margin: 0.25rem 0 0 0.5rem;
-    float: left; 
-  }
-  .header span{
-    display: block;
-    width: 3rem;
-    height: 0.3rem;
-    font-size: 0.3rem;
-    margin-top: 0.25rem;
-    margin-left: 2.3rem;
-    float: left;
-    color: #040404;
-  }
-  /* a2 中国银行  a1 中国建设*/
-  .a2{
+      display: block;
+      width: 0.2rem;
+      height: 0.34rem;
+      margin: 0.25rem 0 0 0.5rem;
+      float: left; 
+      z-index: 10;
+      position: absolute;
+    }
+    .header span{
+      display: block;
+      width: 100%;
+      font-size: 0.3rem;
+      line-height: 0.87rem;
+      text-align: center;
+      color: #040404;
+      position: absolute;
+    }
+    .box{
+      padding-top: 0.83rem;
+    }
+  .a0{
     width: 6.45rem;
     height: 1.99rem;
     margin:0 auto;
@@ -150,7 +155,7 @@ export default {
     margin: 0.15rem;
     position: relative;
     bottom: 0.35rem;
-    left: 1rem;
+    left: 0.65rem;
   }
   .floot{
     width: 100%;

@@ -46,11 +46,15 @@ export default {
     sub:function(){
       var _this = this;
       axios({
+
         method:"post",
         url: Url+"/apis/user/Login",
+        // url:"http://paofen.guotf.cn/home/login/register",
+
         data:{
           user_login:this.tell,
           passwd:this.passWord
+
         }
       }).then(function(res){
         console.log(res)
@@ -96,11 +100,16 @@ export default {
 }
 </script>
 <style scoped>
+body{
+  height: 100%;
+}
   .app{
     width: 100%;
-    height: 14rem;
+    height: 100%;
     background-image: url(../assets/beijing.png);
     padding: 0;
+    position: fixed;
+    
   }
   .box{
     width: 1.76rem;
@@ -142,8 +151,8 @@ export default {
     float: left;
     font-size: 0.28rem;
     background: transparent;
-    line-height: 1.1rem;
     position: relative;
+    top: 0.4rem;
     left: 0.47rem;
     color: #fff;
   }

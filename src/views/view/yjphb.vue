@@ -7,17 +7,30 @@
       </span>
     </div>    
     <div class="zhanwei"></div>
-    <ul class="th">
-      <li>排名</li>
-      <li>ID</li>
-      <li>佣金(元)</li>
-    </ul>
+      <ul class="th">
+        <li>排名</li>
+        <li>ID</li>
+        <li>佣金(元)</li>
+      </ul>
+      <!-- <ul class="tb" v-for="(item,key) of List" :key="key">
+        <li>{{num*10+key+1}}</li>
+        <li>{{item.user_nickname}}</li>
+        <li>{{item.sum}}</li>
+      </ul> -->
+      <van-list
+        v-model="loading"
+        :finished="finished"
+        finished-text="没有更多了"
+        @load="onLoad"
+        class="asd"
+      >
       <ul class="tb" v-for="(item,key) of List" :key="key">
+        
         <li>{{key+1}}</li>
         <li>{{item.user_nickname}}</li>
         <li>{{item.sum}}</li>
       </ul>
-     <van-popup v-model="show" position="bottom"><span class="qingqiu">数据请求中</span></van-popup>
+      </van-list>
   </div>
 </template>
 <script>
@@ -27,13 +40,13 @@
 export default {
   mounted:function(){
     this.getlist();
-    window.addEventListener("scroll", this.scrollBottom,true);
   },
   data(){
     return{
       List:[],
       num:0,
-      show:false,
+      loading: false,
+      finished: false
     }
   },
   methods:{
@@ -52,30 +65,20 @@ export default {
       }).then(function(res){
         console.log(res)
         if(res.data.code == 0){
-          this.$dialog.alert({
-            message: msg
-          });
+          
         }else{
           _this.List = res.data.data;
           
         }
       })
     },
-    scrollBottom:function(){
-      let getScreen = window.screen.height;
-      let scrollTops =
-        document.documentElement.scrollTop ||
-        window.pageYOffset ||
-        document.body.scrollTop;
-      let bHeight = document.body.clientHeight;
-      console.log(getScreen + parseInt(scrollTops));
-      console.log(bHeight);
-      if (getScreen + parseInt(scrollTops) - 19 == bHeight) {
-        this.num += 1;
-        var _this = this;
-        this.show = true;
-      setTimeout(function(){
-        axios({
+    onLoad() {
+      
+      this.num++;
+      var _this = this;
+      // 异步更新数据
+      
+      axios({
         method:"post",
         url:Url+"/apis/user/getYongJinOrder",
         data:{
@@ -85,30 +88,39 @@ export default {
       }).then(function(res){
         console.log(res)
         if(res.data.code == 0){
-          this.$dialog.alert({
-            message: msg
-          });
-        }else{
-          _this.show = false;
-          _this.List = res.data.data;
-          document.getElementsByClassName('zhanwei')[0].scrollIntoView();
+          if(res.data.code == 0){
+          _this.finished = true;
         }
+        }else{
+        //   _this.List.push(res.data.data);
+        //  console.log(_this.List)
+          for(let i=0;i<res.data.data.length;i++){
+            _this.List.push(res.data.data[i]);
+          }
+        }
+        
       })
-      },1000);
-      }
+        // 加载状态结束
+        this.loading = false;
 
+        // 数据全部加载完成
     }
-  }
+  
+  },
+
 }
 </script>
 <style scoped>
 body{
   height: 100%;
 }
+.asd{
+  overflow: hidden;
+}
   .app{
     background: #fff;
     height: 100%;
-    
+
   }
   .header{
     width:100%;
@@ -120,22 +132,23 @@ body{
     top: 0;
   }
   .header img{
-    display: block;
-    width: 0.2rem;
-    height: 0.34rem;
-    margin: 0.25rem 0 0 0.5rem;
-    float: left; 
-  }
-  .header span{
-    display: block;
-    width: 3rem;
-    height: 0.3rem;
-    font-size: 0.3rem;
-    margin-top: 0.25rem;
-    margin-left: 2.3rem;
-    float: left;
-    color: #040404;
-  }
+      display: block;
+      width: 0.2rem;
+      height: 0.34rem;
+      margin: 0.25rem 0 0 0.5rem;
+      float: left; 
+      z-index: 10;
+      position: absolute;
+    }
+    .header span{
+      display: block;
+      width: 100%;
+      font-size: 0.3rem;
+      line-height: 0.87rem;
+      text-align: center;
+      color: #040404;
+      position: absolute;
+    }
   .zhanwei{
     width: 100%;
     height: 0.9rem;
@@ -157,17 +170,17 @@ body{
   }
   .tb{
     width: 98%;
-    height: 1.1rem;
+    height: 1.07rem;
     margin: 0 auto;
     border-bottom: 0.01rem solid #f7f7f7;
   }
   .tb li{
     width: 33%;
-    height: 1.1rem;
+    height: 100%;
     float: left;
     text-align: center;
     color: #040404;
-    line-height: 1.4rem;
+    line-height: 1.07rem;
     font-size: 0.28rem;
   }
   .tb li:last-child{

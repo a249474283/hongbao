@@ -5,8 +5,8 @@
       <img :src="img" alt="">
       <div class="xinx">
         <span>{{nickName}}</span>
-        <p><span>账号：</span> <span>{{user_login}}</span></p>
-        <p><span>余额：</span> <span>{{user_money}}</span></p>
+        <p><span>账号：</span> <span class="hou">{{user_login}}</span></p>
+        <p><span>余额：</span> <span class="hou">{{user_money}}</span></p>
       </div>
     </div>
   <div class="box">
@@ -150,12 +150,18 @@ export default {
     height: 1.5rem;
     float: left;
   }
+ 
   .th .xinx span{
     color: #010101;
     font-size: 0.33rem;
     display: block;
     margin-left: 0.35rem;
    
+  }
+  .th .xinx .hou{
+    margin-left: 0rem;
+    position: relative;
+    top: 0.03rem;
   }
   .th .xinx p{
     width: 3rem;

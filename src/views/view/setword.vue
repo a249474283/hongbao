@@ -36,13 +36,6 @@ export default {
     }
   },
   mounted(){
-    if (window.history && window.history.pushState) {
-    history.pushState(null, null, document.URL);
-    window.addEventListener('popstate', this.goBack, false);
-  }
-  },
-  destroyed(){
-  window.removeEventListener('popstate', this.goBack, false);
 },
   methods:{
     fanhui:function(){
@@ -106,22 +99,23 @@ export default {
     z-index: 4;
   }
   .header img{
-    display: block;
-    width: 0.2rem;
-    height: 0.34rem;
-    margin: 0.25rem 0 0 0.5rem;
-    float: left; 
-  }
-  .header span{
-    display: block;
-    width: 3rem;
-    height: 0.3rem;
-    font-size: 0.3rem;
-    margin-top: 0.25rem;
-    margin-left: 2.3rem;
-    float: left;
-    color: #040404;
-  }
+      display: block;
+      width: 0.2rem;
+      height: 0.34rem;
+      margin: 0.25rem 0 0 0.5rem;
+      float: left; 
+      z-index: 10;
+      position: absolute;
+    }
+    .header span{
+      display: block;
+      width: 100%;
+      font-size: 0.3rem;
+      line-height: 0.87rem;
+      text-align: center;
+      color: #040404;
+      position: absolute;
+    }
   .neirong{
     width: 100%;
     height: 5.7rem;
@@ -138,11 +132,10 @@ export default {
     display: block;
     float: left;
     border: 0;
-    border-bottom: 0.01rem solid #b5b5b5;
     font-size: 0.28rem;
     color: #5a5a5a;
-    line-height: 0.88rem;
-
+    position: relative;
+    top: 0.25rem;
   }
   .neirong .yword span{
     display: block;

@@ -26,7 +26,7 @@
     </div>
     <div>
       <span>银行卡号</span>
-      <input  id="id" type="text" placeholder="请输入" @blur="getyhkid">
+      <input  id="id" type="number" placeholder="请输入" @blur="getyhkid">
     </div>
     <div>
       <span>银行支行</span>
@@ -131,28 +131,29 @@ export default {
     position: relative;
     z-index: 4;
   }
-  .header img{
-    display: block;
-    width: 0.2rem;
-    height: 0.34rem;
-    margin: 0.25rem 0 0 0.5rem;
-    float: left; 
-  }
-  .header span{
-    display: block;
-    width: 3rem;
-    height: 0.3rem;
-    font-size: 0.3rem;
-    margin-top: 0.25rem;
-    margin-left: 2.3rem;
-    float: left;
-    color: #040404;
-  }
+ .header img{
+      display: block;
+      width: 0.2rem;
+      height: 0.34rem;
+      margin: 0.25rem 0 0 0.5rem;
+      float: left; 
+      z-index: 10;
+      position: absolute;
+    }
+    .header span{
+      display: block;
+      width: 100%;
+      font-size: 0.3rem;
+      line-height: 0.87rem;
+      text-align: center;
+      color: #040404;
+      position: absolute;
+    }
   .h2{
     width: 100%;
     height: 0.86rem;
     color: #2a2a2a;
-    font-size: 0.2rem;
+    font-size: 0.3rem;
     line-height: 0.86rem;
     padding-left: 0.52rem;
     font-weight: 500;
@@ -193,6 +194,7 @@ export default {
     background: 0;
     position: relative;
     left: 0.7rem;
+    font-size: 0.3rem;
   }
    #id{
     position: relative;

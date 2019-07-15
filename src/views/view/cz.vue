@@ -73,7 +73,12 @@
           if(res.data.code == 1){
             _this.$dialog.alert({
               message: res.data.msg
-            });
+            }).then(
+              _this.$router.push({
+                path:"/information"
+              })
+            );
+            
           }else{
             _this.$dialog.alert({
               message: res.data.msg
@@ -86,7 +91,9 @@
   </script>
   <style scoped>
     .app{
-      height: 7rem;
+      width: 100%;
+      height: 100%;
+      position: absolute
     }
     .header{
       width:100%;
@@ -101,16 +108,17 @@
       height: 0.34rem;
       margin: 0.25rem 0 0 0.5rem;
       float: left; 
+      z-index: 10;
+      position: absolute;
     }
     .header span{
       display: block;
-      width: 3rem;
-      height: 0.3rem;
+      width: 100%;
       font-size: 0.3rem;
-      margin-top: 0.25rem;
-      margin-left: 2.8rem;
-      float: left;
+      line-height: 0.87rem;
+      text-align: center;
       color: #040404;
+      position: absolute;
     }
     .h2{
       width: 100%;
@@ -152,12 +160,11 @@
     }
     .czcz .cz input{
       width: 4rem;
-      height: 0.85rem;
       float: left;
       font-size: 0.28rem;
       position: relative;
       left: 0.98rem;
-      line-height: 0.85rem;
+      top: 0.25rem;
       border: 0;
     }
     #sub{

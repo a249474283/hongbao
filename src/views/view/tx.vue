@@ -6,8 +6,9 @@
         提现
       </span>
     </div>   
-    <div :id="item.id" :class="a+item.bank_id" v-for="(item,key) of yhkxx" :key="key" @click="xzyhk">
+    <div :id="item.id" :class="a+item.bank_id%2" v-for="(item,key) of yhkxx" :key="key" @click="xzyhk">
     <div class="yh">
+      <!-- <img :src="url+item.bank_logo" alt=""> -->
       <img :src="url+item.bank_logo" alt="">
       <span>{{item.bank_name}}</span>
     </div>
@@ -23,7 +24,7 @@
     <!-- 以上是银行卡 -->
     <van-popup v-model="show" position="bottom">
       <ul class="yhlb">
-        <li :id="item.id" v-for="(item,key) of list" :key="key" @click="yxzyhk">
+        <li :id="item.id" v-for="(item,key) of list" :key="key" @click="yxzyhk(item)">
           <p>{{item.bank_name}}</p>
           <span>{{item.card_number}}</span>
         </li>
@@ -37,7 +38,7 @@
       </div>
       <div class="tx">
         <span>提现金额</span>
-        <input type="text" placeholder="请输入提现金额" @blur="gettxje">
+        <input type="number" placeholder="请输入提现金额" @blur="gettxje">
       </div>
     </div>
     <button id="sub" @click="sub">申请提现</button>
@@ -69,9 +70,7 @@ export default {
     },
     //获取用户已绑定银行卡列表
     xzyhk:function(){
-      this.show=true;
-      console.log((this.show))
-
+      
       var id = localStorage.getItem("Id");
       var _this = this;
       axios({
@@ -83,14 +82,25 @@ export default {
           page_size: 10
         }
       }).then(function(res){
+        console.log(res)
         if(res.data.code == 1){
+          _this.show=true;
           _this.list = res.data.data;
           for(let i = 0;i < _this.list.length;i++){
             _this.list[i].card_number = _this.list[i].card_number.substr(-4);
           }
-        }else{
-          _this.$dialog.alert({
-            message: res.data.msg
+        }else if(res.data.code == 0){
+          _this.$dialog.confirm({
+            message: "尚未绑定银行卡",
+            confirmButtonText:"去绑定",
+
+          }).then(() => {
+            // on confirm
+            _this.$router.push({
+              path:"/wdskh"
+            })
+          }).catch(() => {
+            // on cancel
           });
         }
       })
@@ -120,9 +130,9 @@ export default {
     gettxje:function(e){
       this.txje = e.currentTarget.value;
     },
-    yxzyhk:function(e){
+    yxzyhk:function(val){
       var _this = this;
-      var id = e.currentTarget.id;
+      var id = val.id;
       console.log(id)
       axios({
         url:Url+"/apis/user/getBankcardInfo",
@@ -150,7 +160,13 @@ export default {
     sub:function(){
       var _this = this;
       var id = localStorage.getItem("Id");
-      axios({
+      if(this.yue == 0){
+         _this.$dialog.alert({
+            message: "余额不足"
+          })
+      }else{
+        if(_this.yxzh){
+        axios({
         method:"post",
         url:Url+"/apis/user/saveUserMoneyWithdraw",
         data:{
@@ -160,11 +176,17 @@ export default {
           account:_this.yxzh,
         }
       }).then(function(res){
-        console.log(res)
         _this.$dialog.alert({
             message: res.data.msg
           })
       })
+      }else{
+        _this.$dialog.alert({
+            message: "请选择银行卡"
+          })
+      }
+      }
+      
     }
   }
 }
@@ -178,24 +200,25 @@ export default {
     z-index: 4;
   }
   .header img{
-    display: block;
-    width: 0.2rem;
-    height: 0.34rem;
-    margin: 0.25rem 0 0 0.5rem;
-    float: left; 
-  }
-  .header span{
-    display: block;
-    width: 3rem;
-    height: 0.3rem;
-    font-size: 0.3rem;
-    margin-top: 0.25rem;
-    margin-left: 2.8rem;
-    float: left;
-    color: #040404;
-  }
-   /* a2 中国银行  a1 中国建设*/
-  .a2{
+      display: block;
+      width: 0.2rem;
+      height: 0.34rem;
+      margin: 0.25rem 0 0 0.5rem;
+      float: left; 
+      z-index: 10;
+      position: absolute;
+    }
+    .header span{
+      display: block;
+      width: 100%;
+      font-size: 0.3rem;
+      line-height: 0.87rem;
+      text-align: center;
+      color: #040404;
+      position: absolute;
+    }
+
+.a0{
     width: 6.45rem;
     height: 1.99rem;
     margin:0 auto;
@@ -315,7 +338,7 @@ export default {
     line-height: 0.85rem;
     position: relative;
     left: 0.56rem;
-  } 
+  }
   .txcz .ye p{
     width: 2rem;
     height: 0.85rem;
@@ -328,12 +351,11 @@ export default {
   }
   .txcz .tx input{
     width: 4rem;
-    height: 0.85rem;
     float: left;
     font-size: 0.28rem;
     position: relative;
     left: 0.98rem;
-    line-height: 0.85rem;
+    top: 0.25rem;
     border: 0;
   }
   #sub{

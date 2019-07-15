@@ -31,11 +31,17 @@
       <li>ID</li>
       <li>佣金</li>
       <li>时间</li>
+     
     </ul>
 			<!--内容...-->
       <div class="wrapper" ref='box'>
-        <div class="zhanwei"></div>
-        <ul class="tb" v-for="(item,key) of List" :key="key" id="tb">
+        <van-list
+          v-model="loading"
+          :finished="finished"
+          finished-text="没有更多了"
+          @load="onLoad"
+        >
+         <ul class="tb" v-for="(item,key) of List" :key="key" id="tb">
           <li>{{item.user_nickname}}</li>
           <li>{{item.change_money}}</li>
           <li>
@@ -43,8 +49,9 @@
             <p class="time">{{item.add_time*1000 | formatTime(5)}}</p>
           </li>
         </ul>
+        </van-list>
       </div>
-    <van-popup v-model="show" position="bottom"><span class="qingqiu">数据请求中</span></van-popup>
+
   </div>
 </template>
 
@@ -56,112 +63,88 @@
 export default {
    data(){
     return{
-      List:"",
+      List:[],
       rsy:"",
       zsy:"",
       time:"",
-      num:0,
+      num:-1,
       show:false,
+      loading: false,
+      finished: false
     }
   },
   mounted(){
-    var tb = document.getElementById("tb");
-    this.getlist();
-    // 添加滚动事件，检测滚动到页面底部
-    window.addEventListener('scroll', this.appScroll,true)
-    },
- 
+   this.getlist();
+},
+
   methods:{
     fanhui:function(){
       this.$router.back(-1);
     },
     getlist:function(){
       var _this = this;
-     
       axios({
         method:"post",
         url:Url+"/apis/user/getYongJinList",
         data:{
-          start:1,
-          page_size:10
+          start:0,
+          page_size:6
         }
       }).then(function(res){
-        console.log(res.data);
+        console.log(res);
         if(res.data.code == 0){
-          _this.$dialog.alert({
-            message: msg
-          });
-        }else{
-          _this.List = res.data.data;
-          _this.rsy = res.data.jinri_shouyi;
-          _this.zsy = res.data.zong_shouyi;
+          _this.rsy = "0.00";
+          _this.zsy = "0.00";
+
         }
       })
 
     },
-    appScroll() {
-      let getScreen = window.screen.height;
-      let scrollTops =
-        document.documentElement.scrollTop ||
-        window.pageYOffset ||
-        document.body.scrollTop;
-      let bHeight = document.body.clientHeight;
-      var height =this.$refs.tt.offsetHeight+this.$refs.header.offsetHeight+this.$refs.th.offsetHeight;
-      var _this = this;
-        console.log(_this.$refs.box.scrollTop)
-      if (getScreen + parseInt(scrollTops) - 242 == bHeight) {
-        this.num += 1;
-      var _this = this;
-      this.show = true;
-      setTimeout(function(){
-        axios({
+   onLoad() {
+      // 异步更新数
+        var _this = this;
+        console.log(this.num)
+        this.num++;
+      axios({
         method:"post",
         url:Url+"/apis/user/getYongJinList",
         data:{
-          start:_this.num,
-          page_size:10
+          start:this.num,
+          page_size:6
         }
       }).then(function(res){
         console.log(res.data);
-        _this.show = false;
         if(res.data.code == 0){
-          _this.$dialog.alert({
-            message: msg
-          });
+           _this.finished = true;
         }else{
-          console.log(_this.$refs.box.scrollTop)
-          document.getElementsByClassName('zhanwei')[0].scrollIntoView();
-          _this.$refs.box.scrollTop = 0;
-          _this.List = [];
-          _this.List = res.data.data;
-          _this.rsy = res.data.jinri_shouyi;
-          _this.zsy = res.data.zong_shouyi;
+          console.log(res)
+          for(let i = 0;i<res.data.data.length;i++){
+            _this.List.push(res.data.data[i]);
+            _this.rsy=res.data.jinri_shouyi;
+            _this.zsy = res.data.zong_shouyi;
+           
+          }
+          
         }
+        _this.loading = false;
       })
-      },1000);
-      
-      }
-    },
-    
+        // 加载状态结束
+        
+    }
   },
-  destroyed() {
-    window.removeEventListener("scroll", this.appScroll,true); //移除监听页面滚动事件
-  },
+
 }
 </script>
 <style scoped>
-  body{
-    height: 100%;
-    overflow: hidden;
-  }
+
   .app{
     background: #fff;
     height: 100%;
-        overflow: auto;
+
   }
   .header{
     width:100%;
-    height: 0.87rem;
+    height: 0.83rem;
     background-color: #fff;
     position: relative;
     z-index: 6;
@@ -169,41 +152,39 @@ export default {
     top: 0;
   }
   .header img{
-    display: block;
-    width: 0.2rem;
-    height: 0.34rem;
-    margin: 0.25rem 0 0 0.5rem;
-    float: left; 
-  }
-  .header span{
-    display: block;
-    width: 3rem;
-    height: 0.3rem;
-    font-size: 0.3rem;
-    margin-top: 0.25rem;
-    margin-left: 2.3rem;
-    float: left;
-    color: #040404;
-  }
-
-  .wrapper{
-    height: 13.39rem;
-  }
-  .zhanwei{
-    width: 100%;
-    height:4.09rem;;
-  }
+      display: block;
+      width: 0.2rem;
+      height: 0.34rem;
+      margin: 0.25rem 0 0 0.5rem;
+      float: left; 
+      z-index: 10;
+      position: absolute;
+    }
+    .header span{
+      display: block;
+      width: 100%;
+      font-size: 0.3rem;
+      line-height: 0.87rem;
+      text-align: center;
+      color: #040404;
+      position: absolute;
+    }
+.tishi{
+  height: 1rem;
+}
+.wrapper{
+  width: 100%;
+  height: 9.2rem;
+}
   .tt{
     width: 100%;
     height: 1.82rem;
     background: #f7f7f7;
     margin-top: 1rem;
-    position:fixed;
-    z-index: 6;
   }
   .tt .tt_left{
     width: 50%;
-    height: 1.82rem;
+    height: 100%;
     float: left;
   }
   .tt .tt_left p{
@@ -233,7 +214,7 @@ export default {
   }
    .tt .tt_right{
     width: 50%;
-    height: 1.82rem;
+    height: 100%;
     float: right;
   }
   .tt .tt_right p{
@@ -263,34 +244,32 @@ export default {
   }
   .th{
     width: 100%;
-    height: 1.4rem;
+    height: 1rem;
     border-bottom: 0.01rem solid #f7f7f7;
-    position:fixed;
-    top:2.69rem;
     background: #fff;
   }
   .th li{
     width: 33%;
-    height: 1.4rem;
+    height: 100%;
     float: left;
     text-align: center;
     color: #040404;
-    line-height: 1.4rem;
+    line-height: 70px;
     font-size: 0.3rem;
   }
   .tb{
     width: 98%;
-    height: 1.4rem;
+    height: 1.11rem;
     margin: 0 auto;
     border-bottom: 0.01rem solid #f7f7f7;
   }
   .tb li{
     width: 33%;
-    height: 1.4rem;
+    height: 1.11rem;
     float: left;
     text-align: center;
     color: #040404;
-    line-height: 1.4rem;
+    line-height: 1.11rem;
     font-size: 0.28rem;
   }
   .tb li:nth-child(3){
@@ -300,7 +279,7 @@ export default {
   }
   .tb li:nth-child(3) p{
     width: 100%;
-    height: 0.7rem;
+    height: 0.3rem;
     font-size: 0.28rem;
     color: #040404;
     text-align: center;

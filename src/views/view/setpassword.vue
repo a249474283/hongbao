@@ -21,7 +21,6 @@
       </div>
       <button class="sub" @click="sub">确认</button>
     </div>
-    <div class="zhanwei"></div>
   </div>
 </template>
 <script>
@@ -55,57 +54,42 @@ export default {
     // 修改密码
     sub:function(e){
       var id = localStorage.getItem("Id");
-      var _this = this; 
-      // axios({
-      //   url:Url+"/apis/user/validatePayPasswd",
-      //   method:"post",
-      //   params:{
-      //     id:id,
-      //     money_passwd:this.ypassword
-      //   }
-      // }).then(function(res){
-      //   console.log(res)
-      //   if(res.code == 200){
-      //     if(this.npassword==this.npasswords){
-      //       axios({
-      //         url:Url+"url/apis/user/editPayPasswd",
-      //         method:"post",
-      //         params:{
-      //           id:id,
-      //           money_passwd:this.npasswords,
-      //         }
-      //       }).then(function(res){
-      //         console.log(res)
-      //       })
-      //     }else{
-      //       alert("两次支付密码输入不一致")
-      //     }
-      //   }else{
-      //     alert("原始支付密码错误")
-      //   }
-        
-      // })
-      axios({
-        url:Url+"/apis/user/editPayPasswd",
-        method:"post",
-        params:{
-          user_id:id,
-          money_passwd:this.npassword,
-          money_passwd1:this.npasswords,
-          old_money_pass:this.ypassword,	
-        }
-      }).then(function(res){
-        console.log(res)
-        if(res.data.code==1){
-          _this.$dialog.alert({
-            message: '支付密码修改成功'
-          });
-        }else{
-          _this.$dialog.alert({
-            message: res.data.msg
-          });
-        }
-      })
+      var _this = this;
+      if(!this.npassword){
+        _this.$dialog.alert({
+          message: '请输入新支付密码'
+        });
+      }else if(!this.npasswords){
+        _this.$dialog.alert({
+          message: '请确认新支付密码'
+        });
+      }else if(!this.npasswords == this.npassword){
+        _this.$dialog.alert({
+          message: '两次密码输入不一致'
+        });
+      }else{
+        axios({
+          url:Url+"/apis/user/editPayPasswd",
+          method:"post",
+          params:{
+            user_id:id,
+            money_passwd:this.npassword,
+            money_passwd1:this.npasswords,
+            old_money_pass:this.ypassword,	
+          }
+        }).then(function(res){
+          console.log(res)
+          if(res.data.code==1){
+            _this.$dialog.alert({
+              message: '支付密码修改成功'
+            });
+          }else{
+            _this.$dialog.alert({
+              message: res.data.msg
+            });
+          }
+        })
+      }
     }
   }
 
@@ -120,22 +104,23 @@ export default {
     z-index: 4;
   }
   .header img{
-    display: block;
-    width: 0.2rem;
-    height: 0.34rem;
-    margin: 0.25rem 0 0 0.5rem;
-    float: left; 
-  }
-  .header span{
-    display: block;
-    width: 3rem;
-    height: 0.3rem;
-    font-size: 0.3rem;
-    margin-top: 0.25rem;
-    margin-left: 2.3rem;
-    float: left;
-    color: #040404;
-  }
+      display: block;
+      width: 0.2rem;
+      height: 0.34rem;
+      margin: 0.25rem 0 0 0.5rem;
+      float: left; 
+      z-index: 10;
+      position: absolute;
+    }
+    .header span{
+      display: block;
+      width: 100%;
+      font-size: 0.3rem;
+      line-height: 0.87rem;
+      text-align: center;
+      color: #040404;
+      position: absolute;
+    }
   .neirong{
     width: 100%;
     height: 5.7rem;
@@ -152,10 +137,10 @@ export default {
     display: block;
     float: left;
     border: 0;
-    border-bottom: 0.01rem solid #b5b5b5;
     font-size: 0.28rem;
     color: #5a5a5a;
-    line-height: 0.88rem;
+    position: relative;
+    top: 0.3rem;
   }
   .neirong .yword span{
     display: block;
@@ -177,9 +162,5 @@ export default {
     position: relative;
     left: 0.82rem;
     top: 0.55rem;
-  }
-  .zhanwei{
-    width: 100%;
-    height: 6.28rem;
   }
 </style>

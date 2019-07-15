@@ -39,9 +39,10 @@
       </div>
     </div>
     <div class="tga">
-     <div class="tgl">
+      <div class="tgl" @click="xingming">
         <span>真实姓名</span>
-        <p>范**</p>
+        <p v-if="!mbj">尚未绑定</p>
+        <p v-if="mbj">{{userName}}**</p>
       </div>
       <div class="tgl">
         <span>手机号</span>
@@ -63,6 +64,9 @@ export default {
       url:"",
       nickName:"",
       user_login:"",
+      mbj:true,
+      userName:"",
+
     }
   },
   methods:{
@@ -115,6 +119,14 @@ export default {
           _this.nickName = res.data.data.user_nickname;
           _this.user_login = res.data.data.user_login;
           _this.url = Url+res.data.data.head_img;
+          if(res.data.data.user_name){
+            _this.mbj = true;
+            _this.userName = res.data.data.user_name.substring(0,1);
+            console.log(_this.userName);
+            
+          }else{
+            _this.mbj = false;
+          }
 
         }else{
           _this.$dialog.alert({
@@ -126,6 +138,11 @@ export default {
     xgnc:function(){
       this.$router.push({
         path:"/xgnc"
+      })
+    },
+    xingming(){
+      this.$router.push({
+        path:"/setname"
       })
     }
   }
@@ -140,22 +157,23 @@ export default {
   z-index: 4;
 }
 .header img{
-  display: block;
-  width: 0.2rem;
-  height: 0.34rem;
-  margin: 0.25rem 0 0 0.5rem;
-  float: left; 
-}
-.header span{
-  display: block;
-  width: 3rem;
-  height: 0.3rem;
-  font-size: 0.3rem;
-  margin-top: 0.25rem;
-  margin-left: 2.3rem;
-  float: left;
-  color: #040404;
-}
+      display: block;
+      width: 0.2rem;
+      height: 0.34rem;
+      margin: 0.25rem 0 0 0.5rem;
+      float: left; 
+      z-index: 10;
+      position: absolute;
+    }
+    .header span{
+      display: block;
+      width: 100%;
+      font-size: 0.3rem;
+      line-height: 0.87rem;
+      text-align: center;
+      color: #040404;
+      position: absolute;
+    }
 .touxiang{
   width: 100%;
   height: 1.7rem;

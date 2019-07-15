@@ -1,6 +1,6 @@
 <template>
   <div class="app">
-        <h1 class="bt">游戏</h1>
+      <h1 class="bt">游戏</h1>
     <!-- 以上是头部标题 -->
     <van-swipe :autoplay="3000" indicator-color="white" class="banner">
       <van-swipe-item v-for="(item,index) of bannerList" :key="index">  
@@ -11,15 +11,62 @@
 
 
    <!--  以上是轮播图 -->
-    <div class="box" v-for="(item,key) of hblist" :key="key">
-      <img src="../assets/hongbao.png">
-      <div class="zhong">
-        <p>{{item.title}}</p>
-        <span>{{item.lei_desc}}{{item.number}}包</span>
+    <van-tabs v-model="active">
+    <van-tab title="红包游戏">
+    <van-list
+      v-model="loading"
+      :finished="finished"
+      finished-text="没有更多了"
+      @load="gethbList"
+    >
+      <div class="neirong">
+        <div class="box" v-for="(item,key) of hblist" :key="key">
+          <img src="../assets/hongbao.png">
+          <div class="zhong">
+            <p>{{item.title}}</p>
+            <span>{{item.lei_desc}}{{item.number}}包</span>
+          </div>
+          <button :id="item.id" @click="tiao">进入</button>
+        </div>
       </div>
-      <button :id="item.id" @click="tiao">进入</button>
-    </div>
-  </div>
+      </van-list>
+    </van-tab>
+    <van-tab title="棋牌游戏">
+      <div class="neirong">
+        <div class="box">
+          <img src="../assets/hongbao.png">
+          <div class="zhong">
+            <p>斗地主</p>
+            <!-- <span>{{item.lei_desc}}{{item.number}}包</span> -->
+          </div>
+          <button>敬请期待</button>
+        </div>
+        <div class="box">
+          <img src="../assets/hongbao.png">
+          <div class="zhong">
+            <p>炸金花</p>
+            <!-- <span>{{item.lei_desc}}{{item.number}}包</span> -->
+          </div>
+          <button>敬请期待</button>
+        </div>
+        <div class="box">
+          <img src="../assets/hongbao.png">
+          <div class="zhong">
+            <p>大众麻将</p>
+            <!-- <span>{{item.lei_desc}}{{item.number}}包</span> -->
+          </div>
+          <button>敬请期待</button>
+        </div>
+        
+      </div>
+    </van-tab>
+
+  </van-tabs>
+   </div>
+  
+   
+    
+ 
 </template>
 <script>
 const axios = require('axios');
@@ -35,7 +82,11 @@ export default {
       bannerList:[],
       Url:Url,
       hblist:[],
-      page:"0"
+      page:"0",
+      active: 0,
+      loading: false,
+      finished: false,
+      hbpage:-1,
     }
   },
   methods:{
@@ -76,23 +127,36 @@ export default {
         console.log(_this.bannerList);
     },
      gethbList:function(){
+       this.hbpage++;
         var _this = this;
         axios({
             method:"post",
             url:Url+"/apis/user/getQunList",
             data:{
-                start: _this.page,
-                page_size: 5,
+                start: _this.hbpage,
+                page_size: 6,
             }
         }).then(function(res){
-            console.log(res.data.data);
-            _this.hblist = res.data.data;
+            console.log(res);
+            if(res.data.code == 1){
+              for(let i =0;i<res.data.data.length;i++){
+                _this.hblist.push(res.data.data[i]);
+              }
+              
+            }else{
+              _this.finished = true;
+            }
+             _this.loading = false;
         })
     },
+    // onClick(name, title) {
+    //   this.$toast(title);
+    // }
   }
 }
 </script>
 <style scoped>
+
   .bt{
     width: 100%;
     height: 0.87rem;
@@ -100,14 +164,24 @@ export default {
     line-height: 0.87rem;
     font-size: 0.3rem;
     background: #fff;
+    /* position: fixed;
+    top: 0; */
     }
   .banner,.youx{
     width: 100%;
     height: 3.4rem;
     margin: 0.17rem 0 0.13rem 0;
+    /* position: fixed;
+    top: 0.87rem; */
   }
   .aimg{
     width: 100%;
+  }
+  .van-tab__pane, .van-tab__pane-wrapper {
+        box-sizing: border-box;
+    width: 100%;
+    height: 8rem;
+    overflow: auto;
   }
   .box{
     width: 87.3%;

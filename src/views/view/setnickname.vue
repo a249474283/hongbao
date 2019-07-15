@@ -1,6 +1,6 @@
 <template>
   <div class="app">
-    <div class="header">
+    <div class="headera">
       <img src="../../assets/fanhui.png" @click="fanhui" >
         <span>
           修改昵称
@@ -15,9 +15,7 @@
 <script>
   const axios = require('axios');
   import { Url } from '../../utils/config';
-  
 export default {
-  
   data(){
     return{
       nickName:""
@@ -59,29 +57,28 @@ export default {
   },
 }
 </script>
-<style>
-  .header{
+<style scoped>
+  .headera{
     width:100%;
     height: 0.87rem;
     background-color: #fff;
     position: relative;
     z-index: 4;
   }
-  .header img{
+  .headera img{
     display: block;
     width: 0.2rem;
     height: 0.34rem;
     margin: 0.25rem 0 0 0.5rem;
-    float: left; 
+    position: absolute;
+    z-index: 10;
   }
-  .header span{
+  .headera span{
     display: block;
-    width: 3rem;
-    height: 0.3rem;
+    width: 100%;
     font-size: 0.3rem;
-    margin-top: 0.25rem;
-    margin-left: 2.3rem;
-    float: left;
+    line-height: 0.87rem;
+    text-align: center;
     color: #040404;
   }
   .xgnc{

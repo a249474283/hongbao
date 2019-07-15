@@ -51,10 +51,10 @@ name: "app",
     };
   },
   mounted(){
-   
+
   },
   methods:{
-
+  
   },
   watch: {
     $route(to, from) {
@@ -75,6 +75,7 @@ name: "app",
 </script>
 
 <style>
+@import "./static/iconfont.css";
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;

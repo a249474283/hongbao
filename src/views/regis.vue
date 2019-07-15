@@ -7,32 +7,33 @@
         </span>
     </div>
     <div class="kuai">
-      <span>手机号</span> 
+      <span>*手机号</span> 
       <input type="text" id="tell" placeholder="请输入手机号" @blur="settell">
     </div>
     <div class="kuai">
-      <span>验证码</span>
+      <span>*验证码</span>
       <input type="text" id="tell" placeholder="请输入验证码" @blur="setyzm">
       <button v-if="yzmbj" @click="fsyzm">获取验证码</button>
       <button v-if="!yzmbj">{{yzmnum}}秒后再次获取</button>
     </div>
     <div class="kuai">
-      <span>密码</span>
-      <input type="password" id="tell" placeholder="请输入密码（6~12位)" @blur="getword">
+      <span>*密码</span>
+      <input type="password" id="tell" placeholder="请输入密码(6~12位)" @blur="getword">
     </div>
     <div class="kuai">
-      <span>昵称</span>
+      <span>*昵称</span>
       <input type="text" id="tell" placeholder="请输入昵称" @blur="setnickname">
     </div>
     <div class="kuai">
       <span>推荐码</span>
       <input type="text" id="tell" placeholder="请输入推荐码" @blur="setcode">
     </div>
-    <button id="submit" @click="sub">注册</button>
+      <button id="submit" @click="sub">注册</button>
   </div>
 </template>
 <script>
   const axios = require('axios');
+  import { loginIn} from "../utils/auth";
   import { Url } from "../utils/config"
 export default {
   data(){
@@ -57,25 +58,6 @@ export default {
     settell:function(e){
       this.tell = e.srcElement.value;
       var _this = this;
-      axios({
-        url:Url+"/apis/user/validateMobile",
-        method:"post",
-        params:{
-          send_type:1,
-          user_login:this.tell
-        }
-      }).then(function(res){
-        //console.log(res.data);
-        if(res.data.code == 0){
-          //alert(res.data.msg)
-          _this.$dialog.alert({
-            title: '提示',
-            message: res.data.msg
-          }).then(() => {
-              // on close
-          });
-        }
-      })
     },
     //获取密码
     getword:function(e){
@@ -91,12 +73,17 @@ export default {
           send_type: 1,
         }
       }).then(function(res){
-        console.log(res)
-        console.log(res.data.data)
-        if(res.data.code == 1){
-          console.log(res.data.data)
-          this.getyzm = res.data.data;
-        }
+        // console.log(res)
+        // console.log(res.data.data)
+        // if(res.data.code == 1){
+        //   console.log(res.data.data)
+        //   this.getyzm = res.data.data;
+        // }else{
+        //   this.$dialog.alert({
+        //     title: '提示',
+        //     message: res.data.msg
+        //   })
+        // }
       }.bind(this))
       this.yzmbj = false;
       var shuzi = 59;
@@ -126,8 +113,27 @@ export default {
 
     sub:function(){
       var _this = this;
-      if(this.yzm == this.getyzm){
-        if(this.tell && this.password && this.user_nickname && this.code){
+       axios({
+        url:Url+"/apis/user/validateMobile",
+       
+        method:"post",
+        params:{
+          send_type:1,
+          user_login:this.tell
+   
+        }
+      }).then(function(res){
+        console.log(res.data);
+        if(res.data.code == 0){
+          //alert(res.data.msg)
+           _this.$dialog.alert({
+              title: '提示',
+              message: res.data.msg
+            })
+        }
+      })
+      // if(this.yzm == this.getyzm){
+        if(this.tell && this.password && this.user_nickname && this.yzm){
           axios({
             url:Url+"/apis/user/register",
             method:"post",
@@ -135,17 +141,19 @@ export default {
               user_login:this.tell,
               passwd: this.password,
               user_nickname:this.user_nickname,
-              code:this.code
+              code:this.code,
+              code_yz:this.yzm
             }
           }).then(function(res){
             console.log(res.data)
             if(res.data.code == 1){
+              loginIn("Id",res.data.data);
               _this.$dialog.alert({
                 title: '提示',
                 message: '注册成功'
               }).then(function(){
                   _this.$router.push({
-                  path:"/"
+                  path:"/index"
                 })
               })
             }else{
@@ -158,12 +166,11 @@ export default {
             }
           }.bind(this).bind(this))
             }else{
-                alert("所有信息都是必填项");
+                alert("*标记的都是必填项");
               }
-            }else{
-
-              alert("验证码输入错误")
-            }
+            // }else{
+            //   alert("验证码输入错误")
+            // }
         }
       }
 }
@@ -171,14 +178,16 @@ export default {
 <style scoped>
   .app{
     width: 100%;
-    height: 13.34rem;
+    height: 100%;
     background-image: url(../assets/beijing.png);
+    position: fixed;
   }
   .header{
     width:100%;
     height: 0.87rem;
     position: relative;
     z-index: 4;
+    background-image: url(../assets/beijing.png);
   }
     .header img{
         display: block;
@@ -220,11 +229,12 @@ export default {
       border: 0;
       width: 2.7rem;
       background:rgba(255, 255, 255, 0);
-      height: 0.75rem;
       display: block;
       float: left;
       color: #fff;
       font-size: 0.28rem;
+      position: relative;
+      top: 0.2rem;
     }
     .kuai input::placeholder{
       color: #fff;
@@ -242,12 +252,13 @@ export default {
       border: 0;
       width: 5.87rem;
       height: 0.8rem;
+      margin: 0 auto;
       background: #fff;
       border-radius: 0.08rem;
       font-size: 0.28rem;
       color: #0AC161;
       position: relative;
-      top: 1.4rem;
-      left: 0.82rem;
+      top: 1.64rem;
+      left: 0.84rem;
     }
 </style>

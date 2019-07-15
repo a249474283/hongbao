@@ -32,7 +32,7 @@ import Xxxq from '../views/view/xxxq.vue'   //消息详情
 import Yxgz from '../views/view/yxgz.vue'   //游戏规则
 import Xgnc from '../views/view/setnickname.vue'//修改昵称
 import Jlxx from '../views/view/jlxx.vue' //奖励信息
-
+import Setname from '../views/view/setname.vue' //奖励信息
 Vue.use(Router)
 
 export default new Router({
@@ -111,6 +111,11 @@ export default new Router({
       path:'/setup',
       name:'Setup',
       component:Setup
+    },
+    {
+      path:'/setname',
+      name:'Setname',
+      component:Setname
     },
     {
       path:'/yjlb',

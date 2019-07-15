@@ -3,29 +3,33 @@
         
         <div class="header">
             <img src="../../assets/fanhui.png" @click="fanhui">
-            <span>
+            <span class="biaoti">
                 {{title}}
             </span>
-            <p>
-                <img src="../../assets/dian.png" alt=""  @click="xq">
-            </p>
+                <span class="iconfont icon-icon-test gengduo" @click="xq"></span>
         </div>
 
 
         <van-pull-refresh v-model="isLoading" @refresh="onRefresh">
             <div class="neirong" id="chatContainer" >
              <div class="hongbaoa" v-for="(item,key) of hblist" :key="key" >
-                <van-button type="primary" v-if="!item.bao_id" @click="showPopup" class="tan" :id="item.id">
+                <van-button type="primary" v-if="!item.bao_id" @click="showPopup(item)" class="tan" :id="item.id">
                     <div class="xiaoxi" >
                         <img class="toux" :src="url+item.head_img" alt="">
                         <div class="hongb">
-                            <span>{{item.user_nickname}}</span>
+                            <span class="nickname">{{item.user_nickname}}</span>
                             <img src="../../assets/zu.png">
+                            <span id="qian">{{item.money*1}}-{{item.lei_number}}</span>
+
+                            <span id="lingqu">领取红包</span>
                         </div>
                     </div>
                 </van-button>
-                <div class="ts" v-else>
-                    恭喜 {{item.user_nickname}} {{item.money}}-{{item.lei_number}}中奖，奖励12.34+6.66元
+                <div class="tsbox" v-else>
+                    <div class="ts">
+                        恭喜 {{item.user_nickname}} {{item.money}}-{{item.lei_number}}中奖，奖励12.34+6.66元
+                    </div>
+                    
                 </div>
                 <van-popup v-model="show">
                     <div class="hongbaoo">
@@ -96,6 +100,7 @@ export default {
         },
         xiangqing:function(){
             var _this = this;
+            console.log(_this.hbid)
             this.$router.push({
                 name:"Lqxq",
                 params:{
@@ -114,9 +119,9 @@ export default {
                 }
             })
         },
-        showPopup(e) {
-            console.log(e);
-            this.hbid = e.srcElement.id;
+        showPopup(val) {
+            console.log(val);
+            this.hbid = val.id
             var _this = this;
             var id = localStorage.getItem("Id");
             axios({
@@ -131,6 +136,7 @@ export default {
                 // 判断红包是否被领完
                 if(res.data.code == 2 ){
                     //红包被领完了
+                    console.log(res.data)
                     _this.fimg = res.data.data.head_img;
                     _this.fnickname = res.data.data.user_nickname;
                     _this.show = true;
@@ -145,7 +151,7 @@ export default {
                         }
                     }).then(function(res){
                         console.log(res)
-                        if(res.data.code == 1){
+                        if(res.data.code == 1|| res.data.code == 3){
                             _this.$router.push({
                                 name:"Lqxq",
                                 params:{
@@ -163,7 +169,6 @@ export default {
             })
 
         },
-   
         // 获取群里的信息
     getqunxx:function(){
         this.quna = setInterval(()=>{
@@ -190,14 +195,6 @@ export default {
                         }
                 })
             })
-            //请求退红包接口
-            //  axios({
-            //     url:Url+"/apis/user/tuiHongBao",
-            //     method:"post",
-            //     data:{
-            //     }
-            // }).then(function(res){
-            // })
         },3000)
          },
          getqunxxone:function(){
@@ -226,14 +223,6 @@ export default {
                 })
                 }
             })
-           // 请求退红包接口
-            //  axios({
-            //     url:Url+"/apis/user/tuiHongBao",
-            //     method:"post",
-            //     data:{
-            //     }
-            // }).then(function(res){
-            // })
          },
     onRefresh() {
       setTimeout(() => {
@@ -289,19 +278,6 @@ export default {
                  console.log(_this.yue);
             })
         },
-    //   scrollBottom:function(){
-    //     let getScreen = window.screen.height;
-    //     let scrollTops =
-    //         document.documentElement.scrollTop ||
-    //         window.pageYOffset ||
-    //         document.body.scrollTop;
-    //     let bHeight = document.body.clientHeight;
-    //     console.log(getScreen + parseInt(scrollTops));
-    //     console.log(bHeight);
-    //     if(getScreen + parseInt(scrollTops) - 80 == bHeight){
-
-    //     }
-    //   }
     },
     
     beforeDestroy(){
@@ -313,6 +289,7 @@ export default {
 }
 </script>
 <style scoped>
+
     .app{
         padding-bottom: 1rem;
     }
@@ -325,27 +302,33 @@ export default {
         z-index: 6;
     }
     .header img{
-        display: block;
-        width: 0.2rem;
-        height: 0.34rem;
-        margin: 0.25rem 0 0 0.5rem;
-        float: left; 
+      display: block;
+      width: 0.2rem;
+      height: 0.34rem;
+      margin: 0.25rem 0 0 0.5rem;
+      float: left; 
+      z-index: 10;
+      position: absolute;
     }
-    .header span{
-        display: block;
-        width: 3rem;
-        height: 0.3rem;
-        font-size: 0.3rem;
-        margin-top: 0.25rem;
-        margin-left: 1.75rem;
-        float: left;
-        color: #040404;
+    .header .biaoti {
+      display: block;
+      width: 100%;
+      font-size: 0.3rem;
+      line-height: 0.87rem;
+      text-align: center;
+      color: #040404;
+      position: absolute;
     }
- 
+    .header .gengduo{
+        font-size: 0.4rem;
+        position: absolute;
+        top: 0.19rem;
+        right: 0.25rem;
+        z-index: 10;
+    }
     .header p img{
         display: block;
-        width: 0.7rem;
-        height: 0.87rem;
+
         position: relative;
         bottom: 0.24rem;
     }
@@ -364,7 +347,7 @@ export default {
         height: 0.86rem;
         float: left;
         margin-top: 0.7rem;
-        margin-left: 0.7rem;
+        margin-left: 0.9rem;
     }
     .tan{
         width: 100%;
@@ -378,15 +361,15 @@ export default {
         height: 2.0rem;
         float: left;
     }
-    .neirong .xiaoxi .hongb span{
+    .neirong .xiaoxi .hongb .nickname{
         display: block;
-        width: 1rem;
         height: 0.25rem;
         color: #808080;
         float: left;
         font-size: 0.24rem;
         position: relative;
         bottom: 0.3rem;
+        left: 0.2rem;
     }
     .neirong .xiaoxi .hongb img{
         display: block;
@@ -394,18 +377,20 @@ export default {
         height: 1.6rem;
         float: left;
     }
+    .neirong .tsbox{
+        width: 100%;
+        height: 0.42rem;
+    }
     .neirong .ts{
         width: 6rem;
         height: 0.42rem;
+        margin: 0 auto;
         background-color: #d9d9d9; 
         font-size: 0.2rem;
         color: #F32B21;
         text-align: center;
         line-height: 0.42rem;
-        position: relative;
-        float: left;
-        left: 0.4rem;
-
+        
     }
 
     /* 弹窗部分 */
@@ -417,17 +402,17 @@ export default {
     overflow: hidden;
   }
   .hongbaoo img{
-      width: 7.47rem;
-      height: 8.08rem;
+      width: 5.3rem;
+  
       display: block;
       margin: 0 auto;
   }
   .hongbaoo dl{
-    width: 0.8rem;
-    height: 1.14rem;
+    width: 100%;
+    height: 1.5rem;
     position: absolute;
-    left: 3.37rem;
-    top: 2.42rem;
+
+    top: 1rem;
   }
   .hongbaoo dl dt{
     width: 0.76rem;
@@ -439,7 +424,7 @@ export default {
     height: 0.76rem;
   }
   .hongbaoo dl dd{
-    width: 0.8rem;
+    width: 100%;
     color: #FFE4B4;
     font-size: 0.28rem;
     text-align: center;
@@ -447,19 +432,20 @@ export default {
   }
   .hongbaoo p{
     font-size: 0.3rem;
-    margin: 0 auto;
     color: #FFE4B4;
     position: relative;
     bottom: 3.51rem;
-    left: 2.9rem;
+    width: 100%;
+    text-align: center
   }
   .hongbaoo .ck{
     font-size: 0.28rem;
-    margin: 0 auto;
+    display: block;
+    width: 100%;
     color: #FFE4B4;
     position: relative;
-    bottom: 2rem;
-    left: 2.9rem;
+    bottom: 1.5rem;
+    text-align: center;
   }
   .yuan{
     width: 0.56rem;
@@ -471,10 +457,32 @@ export default {
     line-height: 0.56rem;
     border-radius: 0.56rem;
     position: relative;
-    left: 3.45rem;
+    left: 2.3rem;
     bottom: 0.4rem;
   }
-
+    #qian{
+        width: 2rem;
+        height: 0.5rem;
+        color: #fff;
+        display: block;
+        font-size: 0.28rem;
+        line-height: 0.5rem;
+        position: relative;
+        bottom: 1.4rem;
+        left: 1.3rem;
+        text-align: left;
+    }
+    #lingqu{
+        width: 2rem;
+        height: 0.5rem;
+        color: #fff;
+        display: block;
+        font-size: 0.28rem;
+        line-height: 0.5rem;
+        position: relative;
+        bottom: 1rem;
+        left:0.8rem;
+    }
 
     /* 页脚 */
     .floot{

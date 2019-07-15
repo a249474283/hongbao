@@ -30,8 +30,7 @@
           </dd>
         </dl>
         <div class="qb" @click="allquncy">
-          <p>查看全部群成员</p>
-          <span>（{{cynum}}）</span>
+          查看全部群成员（{{1000+cynum}}）
         </div>
       </div>
     </div>
@@ -59,6 +58,7 @@ export default {
     //返回上一页
     fanhui:function(){
       this.$router.back(-1);
+      console.log(11)
     },
     //跳转至群规则
     gz:function(){
@@ -141,6 +141,7 @@ export default {
 }
 </script>
 <style scoped>
+
   .header{
     width:100%;
     height: 0.87rem;
@@ -148,23 +149,24 @@ export default {
     position: relative;
     z-index: 4;
   }
-  .header img{
-    display: block;
-    width: 0.2rem;
-    height: 0.34rem;
-    margin: 0.25rem 0 0 0.5rem;
-    float: left; 
-  }
-  .header span{
-    display: block;
-    width: 3rem;
-    height: 0.3rem;
-    font-size: 0.3rem;
-    margin-top: 0.25rem;
-    margin-left: 2.3rem;
-    float: left;
-    color: #040404;
-  }
+ .header img{
+      display: block;
+      width: 0.2rem;
+      height: 0.34rem;
+      margin: 0.25rem 0 0 0.5rem;
+      float: left; 
+      z-index: 10;
+      position: absolute;
+    }
+    .header span{
+      display: block;
+      width: 100%;
+      font-size: 0.3rem;
+      line-height: 0.87rem;
+      text-align: center;
+      color: #040404;
+      position: absolute;
+    }
   .qun{
     width: 100%;
     height: 1.94rem;
@@ -248,7 +250,7 @@ export default {
     display: block;
   }
   .cy .qcy dl dd{
-    width: 0.7rem;
+    width: 0.9rem;
     color: #666666;
     display: block;
     font-size: 0.26rem;
@@ -257,16 +259,12 @@ export default {
     overflow: hidden;
   }
   .cy .qcy .qb{
+    width: 100%;
     font-size: 0.28rem;
     color: #808080;
     position: relative;
-    left: 2rem;
-  }
-  .cy .qcy .qb p{
-    float:left;
-  }
-  .cy .qcy .qb span{
-    display: block;
+    height: 0.5rem;
+    text-align: center;
     float: left;
   }
 </style>

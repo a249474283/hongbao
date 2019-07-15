@@ -13,14 +13,15 @@
       <img class="mytouxiang" :src="url+hongbxx.head_img" >
       <div class="lqxx">
         <span class="name">{{hongbxx.user_nickname}}的红包</span>
-        <span class="num">{{hongbxx.money}}-{{hongbxx.lei_number}}</span>
+        <span class="num">{{parseInt(hongbxx.money)}}-{{hongbxx.lei_number}}</span>
         <span class="price" v-if="user">{{user.bao_money}}</span>
         <span class="prices" v-if="!user">未领取到红包</span>
       </div>
     </div>
     <div class="lqxq">
       <div class="th">
-          <span>{{hongbxx.number}}个红包共{{hongbxx.money}}元{{hongbxx.diff_time}}秒被抢光</span>
+          <span v-if="hongbxx.is_ling == 1&&hongbxx.tuihui == 0">{{hongbxx.number}}个红包共{{parseInt(hongbxx.money)}}元{{parseInt(hongbxx.diff_time)}}秒被抢光</span>
+          <span v-if="hongbxx.tuihui > 0">未领取的{{hongbxx.tuihui}}个红包已经被退回</span>
       </div>
       <ul class="lqr">
         <li v-for="(item,key) of lingqulist" :key="key">
@@ -28,13 +29,16 @@
             <img class="tx" :src="url+item.head_img">
             <div class="xinx">
               <p class="xinN">{{item.user_nickname}}</p>
-              <p class="xinT">{{item.update_time*1000 | formatTime(3)}}</p>
+              <p class="xinT">{{item.update_time*1000 | formatTime(5)}}</p>
             </div>
           </div>
           <div class="lqzt">
-            <p class="qian">{{item.bao_money}}</p>
-            <p class="zl" v-if="item.is_paid">遗憾中雷</p>
-            <p class="yqw" v-if="item.is_max">手气最佳</p>
+            <p class="qian">{{item.bao_money*1}}元</p>
+            <div class="yqzt">
+              <p class="zl" v-if="item.is_paid"><img src="../../assets/zhonglei.png" class="zhonglei">遗憾中雷</p>
+              <p class="yqw" v-if="item.is_max"><img src="../../assets/huangguan.png" class="huangguan">手气最佳</p>
+            </div>
+            
           </div>
         </li>
         <!-- <li>
@@ -117,6 +121,7 @@ export default {
           _this.lingqulist = res.data.bao_log;
           _this.user = res.data.user;
           _this.hongbxx = res.data.bao_info;
+
           console.log(res.data.bao_log);
           console.log(res.data.user);
           console.log(res.data.bao_info);
@@ -141,22 +146,23 @@ export default {
       position: relative;
       z-index: 4;
     }
-    .header img{
-        display: block;
-        width: 0.2rem;
-        height: 0.34rem;
-        margin: 0.25rem 0 0 0.5rem;
-        float: left; 
+   .header img{
+      display: block;
+      width: 0.2rem;
+      height: 0.34rem;
+      margin: 0.25rem 0 0 0.5rem;
+      float: left;
+      z-index: 10;
+      position: absolute;
     }
     .header span{
-        display: block;
-        width: 3rem;
-        height: 0.3rem;
-        font-size: 0.3rem;
-        margin-top: 0.25rem;
-        margin-left: 2.3rem;
-        float: left;
-        color: #040404;
+      display: block;
+      width: 100%;
+      font-size: 0.3rem;
+      line-height: 0.87rem;
+      text-align: center;
+      color: #040404;
+      position: absolute;
     }
     .box{
       width: 100%;
@@ -188,7 +194,7 @@ export default {
       top: -0.58rem;
     }
     .lqxx{
-      width: 1.45rem;
+      width: 2rem;
       height: 1.5rem;
       margin: 0 auto;
       position: relative;
@@ -198,21 +204,21 @@ export default {
       font-size: 0.28rem;
       color: #171717;
       display: block;
-      width: 1.45rem;
+      width: 100%;
       text-align: center;
     }
     .lqxx .num{
       font-size: 0.28rem;
       color: #171717;
       display: block;
-      width: 1.45rem;
+      width: 2rem;
       text-align: center;
     }
     .lqxx .price{
       color: #FF3D26;
       font-size:0.45rem;
       display: block;
-      width: 1.45rem;
+      width: 2rem;
       text-align: center;
       position: relative;
     }
@@ -220,7 +226,7 @@ export default {
       color: #FF3D26;
       font-size:0.3rem;
       display: block;
-      width: 1.45rem;
+      width: 2rem;
       text-align: center;
       
     }
@@ -238,7 +244,8 @@ export default {
       width: 100%;
       height: 0.79rem;
       line-height: 0.79rem;
-      border-bottom: 0.01rem solid #f7f7f7; 
+      margin-bottom: 0.3rem;
+
     }
     .lqxq .th span{
       display: block;
@@ -271,18 +278,24 @@ export default {
       width: 1.78rem;
       height: 1.38rem;
       float: right;
+      position: relative;
+      left: 0.3rem;
     }
     .lqr li .txm .xinx .xinN{
       font-size: 0.3rem;
       color: #333333;
-      
+      width: 100%;
+      overflow: hidden;
+				text-overflow: ellipsis;
+        white-space: nowrap;
     }
     .lqr li .txm .xinx .xinT{
       font-size: 0.28rem;
       color: #808080;
+      margin-top: 0.2rem;
     }
     .lqzt{
-      width: 1.5rem;
+      width: 4rem;
       height: 1.38rem;
       float: right;
       margin-right: 0.45rem;
@@ -290,13 +303,38 @@ export default {
     .lqzt .qian{
       color: #333333;
       font-size: 0.3rem;
+      float: right;
+       margin-right: 0.2rem;
     }
-    .lqzt .zl{
+    .lqzt .yqzt{
+      width: 4rem;
+      height: 0.87rem;
+      float: right;
+    }
+    .lqzt .yqzt .zl{
       color: #FB5135;
       font-size: 0.26rem;
+      float: right;
+       margin-right: 0.2rem;
     }
-    .lqzt .yqw{
+    .lqzt .yqzt .zl .zhonglei{
+      width: 0.54rem;
+      height: 0.54rem;
+      position: relative;
+      top: 0.1rem;
+     
+    }
+    .lqzt .yqzt .yqw{
       color: #FBBE21;
       font-size: 0.26rem;
+      float: right;
+      margin-right: 0.2rem;
     }
+    .lqzt .yqzt .yqw .huangguan{
+      width: 0.54rem;
+      height: 0.54rem;
+      position: relative;
+      top: 0.2rem;
+    }
+    
 </style>

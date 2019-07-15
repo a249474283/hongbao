@@ -10,8 +10,6 @@
                 v-show="shows"
                 :text = "text"
             >
-            
-
             </van-notice-bar>
         </div>
         <!-- 弹窗 -->
@@ -25,30 +23,55 @@
             </div>
         </van-popup>
         
-        <a target="_blank" :href="kefuq+qq+kefuh">
+        <!-- <a target="_blank" :href="kefuq+qq+kefuh"> -->
             <div class="xiaoxi" @click="kefu">
-            <img class="xiaoxi_left" src="../assets/kefu.png">
-            <div class="xiaoxi_right">
-                <h2>在线客服</h2>
-                <div class="neiron">你好，任何疑问请联系我</div>
-            </div>
-            </div>
-        </a>
-
-
-
-        <div class="xiaoxi" :id="item.id" @click="qun" v-for="(item,key) of hblist" :key="key">
-            <img class="xiaoxi_left" src="../assets/hongbao.png">
-            <div class="xiaoxi_right">
-                <div class="nc">
-                    <h2>{{item.title}}</h2>
-                    <span>{{item.add_time | formatTime(3)}}</span>
+                <img class="xiaoxi_left" src="../assets/kefu.png">
+                <div class="xiaoxi_right">
+                    <h2>在线客服</h2>
+                    <div class="neiron">你好，任何疑问请联系我</div>
                 </div>
-                <div class="cm">{{item.user_nickname}}：[红包]</div>
             </div>
-        </div>
+            <!-- 客服内容 -->
+            <van-popup v-model="showa" overlay-class="kefucenter">
+                <div class="neirongx" v-html="kefua" @click="kfgb"></div>
+            </van-popup>
+        <!-- </a> -->
+
+
+        <van-list
+            v-model="loading"
+            :finished="finished"
+            finished-text="没有更多了"
+            @load="gethbList"
+        >
+            <div class="xiaoxi" :id="item.id" @click="qun" v-for="(item,key) of hblist" :key="key">
+                <img class="xiaoxi_left" src="../assets/hongbao.png">
+                <div class="xiaoxi_right">
+                    <div class="nc">
+                        <h2>{{item.title}}</h2>
+                        <span>{{item.add_time | formatTime(3)}}</span>
+                    </div>
+                    <div class="cm">{{item.user_nickname}}：[红包]</div>
+                </div>
+            </div>
+        </van-list>
     </div>
 </template>
+<style>
+    .neirongx{
+        width: 100%;
+        height: 5rem;
+        margin: 0 auto;
+        line-height: 0.25rem;
+        position: relative;
+        top: 1rem;
+    }
+    .neirongx img{
+        width: 80%;
+    }
+ 
+</style>
+
 <script>
     const axios = require("axios");
     import { Url } from "../utils/config"
@@ -56,21 +79,25 @@ export default {
     mounted:function(){
         this.getxx();
         this.gonggao();
-        this.gethbList();
-        this.kefu();
+
     },
     data(){
         return{
             show: false,
             title:"",
             content:"",
-            page:"0",
             hblist:[],
             text:"",
             shows:true,
+            showa:false,
             qq:'',
-            kefuq:"http://wpa.qq.com/msgrd?v=3&uin=",
-            kefuh:"&site=qq&menu=yes"
+            // kefuq:"http://wpa.qq.com/msgrd?v=3&uin=",
+            // kefuh:"&site=qq&menu=yes",
+            biaoji:0,
+            kefua:"",
+            loading: false,
+            finished: false,
+            hbpage:-1,
         }
   },
   methods:{
@@ -81,18 +108,23 @@ export default {
         this.show = false;
     },
     gonggao:function(){
-        this.show = true;
+        if(!sessionStorage.getItem('biaoji')){
+            this.show = true;
+        }
         axios({
             url:Url+"/apis/common/getNotice",
             method:"post",
             params:{
             }
         }).then(function(res){
+         
             this.title = res.data.data[0].title;
             this.content =res.data.data[0].content;
         }.bind(this))
+        sessionStorage.setItem("biaoji", "1");
     },
     getxx:function(){
+        
         var _this = this;
         var id = localStorage.getItem("Id");
         axios({
@@ -116,15 +148,24 @@ export default {
     },
     gethbList:function(){
         var _this = this;
+        this.hbpage++;
         axios({
             method:"post",
             url:Url+"/apis/user/getQunList",
             data:{
-                start: _this.page,
-                page_size: 5,
+                start: _this.hbpage,
+                page_size: 6,
             }
         }).then(function(res){
-            _this.hblist = res.data.data;
+            if(res.data.code == 1){
+              for(let i =0;i<res.data.data.length;i++){
+                _this.hblist.push(res.data.data[i]);
+              }
+              
+            }else{
+              _this.finished = true;
+            }
+             _this.loading = false;
         })
     },
     xxzx:function(){
@@ -153,13 +194,33 @@ export default {
       })
     },
     kefu:function(){
+        // var _this = this;
+        // axios({
+        //     method:"post",
+        //     url:Url+"/apis/user/getSystemQq",
+        // }).then(function(res){
+        //     _this.qq = res.data.data.qq;
+        //     let aurl = "http://wpa.qq.com/msgrd?v=3&uin="+_this.qq+"&site=qq&menu=yes";
+        //     void plus.runtime.openURL( aurl)
+        // })
+        console.log(1)
         var _this = this;
         axios({
             method:"post",
-            url:Url+"/apis/user/getSystemQq",
+            url:Url+"/apis/article/getArticleDetails",
+            params:{
+                id:37
+            }
         }).then(function(res){
-            _this.qq = res.data.data.qq;
+           console.log(res);
+           if(res.data.code == 1){
+               _this.showa = true;
+               _this.kefua = res.data.data.content
+           }
         })
+    },
+    kfgb(){
+        this.showa = false;
     }
   }
 }
@@ -217,6 +278,7 @@ export default {
     bottom: 3rem;
     text-align: center;
   }
+  
   .gg p{
     color: #717171;
     font-size: 0.26rem;
@@ -237,7 +299,9 @@ export default {
     bottom: 0.5rem;
     left: 1.66rem;;
   }
-
+    .akf{
+        width: 100%;
+    }
     .xiaoxi{
         width: 100%;
         height: 1.47rem;
@@ -302,7 +366,8 @@ export default {
         display: block;
         float: right;
         margin-top: 0.05rem;
-        margin-right: 0.5rem;
+        position: relative;
+        left: 0.7rem;
     }
     
 </style>

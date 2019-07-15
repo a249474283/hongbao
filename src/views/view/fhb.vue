@@ -50,7 +50,8 @@ export default {
       max:"",
       min:"",
       number:"",
-      pei:""
+      pei:"",
+      lsbj:false, //雷数不合法标记
     }
   },
   methods:{
@@ -69,7 +70,15 @@ export default {
     //获取雷的数字
     leishu:function(e){
       this.leishu = e.srcElement.value;
+      this.lsbj = false;
       console.log(this.leishu)
+      for(let i=1;i<this.leishu.length;i+=2){
+        console.log(this.leishu[i])
+        if(this.leishu.length>1&this.leishu[i] != ","){
+          this.lsbj = true;
+        }
+      }
+      console.log(this.lsbj);
     },
     //发红包
     sub:function(){
@@ -77,28 +86,35 @@ export default {
       var id = localStorage.getItem("Id");
       var qun_id = this.$route.params.id;
       var _this = this;
-      axios({
-        method:'post',
-        url:Url+"/apis/user/saveUserBao",
-        data:{
-          qun_id:qun_id,
-          user_id:id,
-          money: this.hbje,
-          lei_number:this.leishu
-        }
-      }).then(function(res){
-        console.log(res)
-        if(res.data.code == 1){
-          _this.$dialog.alert({
-            message: '发送成功'
-          });
-          _this.$router.back(-1);
-        }else{
-          _this.$dialog.alert({
-            message: res.data.msg
-          });
-        }
-      })
+      if(!this.lsbj){
+         axios({
+          method:'post',
+          url:Url+"/apis/user/saveUserBao",
+          data:{
+            qun_id:qun_id,
+            user_id:id,
+            money: this.hbje,
+            lei_number:this.leishu
+          }
+        }).then(function(res){
+          console.log(res)
+          if(res.data.code == 1){
+            _this.$dialog.alert({
+              message: '发送成功'
+            });
+            _this.$router.back(-1);
+          }else{
+            _this.$dialog.alert({
+              message: res.data.msg
+            });
+          }
+        })
+      }else{
+        _this.$dialog.alert({
+          message: "雷数只能是1位数"
+        });
+      }
+     
     },
     //获取规则
     getqunxx:function(){
@@ -137,23 +153,24 @@ export default {
     z-index: 4;
     margin-bottom: 0.29rem;
   }
-  .header img{
-    display: block;
-    width: 0.2rem;
-    height: 0.34rem;
-    margin: 0.25rem 0 0 0.5rem;
-    float: left; 
-  }
-  .header span{
-    display: block;
-    width: 3rem;
-    height: 0.3rem;
-    font-size: 0.3rem;
-    margin-top: 0.25rem;
-    margin-left: 2.8rem;
-    float: left;
-    color: #040404;
-  }
+.header img{
+      display: block;
+      width: 0.2rem;
+      height: 0.34rem;
+      margin: 0.25rem 0 0 0.5rem;
+      float: left; 
+      z-index: 10;
+      position: absolute;
+    }
+    .header span{
+      display: block;
+      width: 100%;
+      font-size: 0.3rem;
+      line-height: 0.87rem;
+      text-align: center;
+      color: #040404;
+      position: absolute;
+    }
   .lan{
     width: 100%;
     height: 0.98rem;
@@ -184,7 +201,8 @@ export default {
     width: 1.68rem;
     float: right;
     border: 0;
-    line-height: 0.98rem;
+    position: relative;
+    top: 0.3rem;
   }
   .ts{
     width: 100%;
